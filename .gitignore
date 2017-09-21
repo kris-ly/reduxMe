@@ -1,0 +1,6 @@
+# Node.js and NPM
+node_modules
+npm-debug.log
+
+# build
+dist
