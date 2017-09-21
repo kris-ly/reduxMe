@@ -15,19 +15,6 @@ const createAppStore = (reducer, mws) => {
   return createStoreWithMW(reducer)
 }
 
-/*
-syncActions = [{
-  item: , // item表示要改变state中对应的key，
-  action: , action表示对state的操作，包含: 'update', 'concat'
-}]
-
-asyncAction = [{
-  item: 'num',
-  action: ''update',
-  launch:
-}]
- */
-
 export const generateAction = (method, key, isAsync) => { // 生成对应的
   if (isAsync) return `${method}${key}async`
   return method + key;
