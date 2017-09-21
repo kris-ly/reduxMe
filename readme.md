@@ -55,7 +55,7 @@ action类型同上
 ```javascript
 const syncs = [{
   item: 'num',
-  action: update',
+  action: 'update',
   launch: [function], // 为异步操作的数据流方法，返回一个Promise，在resolve中传递action的payload
 }]
 ```
@@ -71,7 +71,7 @@ const syncs = [{
 
 ### 2. connectMe
 
-对react-redux中connect的封装，包括：mapStateToProps和mapDispatchtoProps
+对react-redux中connect的封装，包括：mapStateToProps和mapDispatchToProps
 
 输入输出：`(component, keys, actions) => smartComponent`
 
@@ -89,7 +89,7 @@ const syncs = [{
 - `key[String]`：改变state对应key
 - `isAsync[boolean]`：是否是异步action
 
-### renderProvider
+### 4. renderProvider
 
 对react-redux的Provider和react-dom中render方法的封装
 
