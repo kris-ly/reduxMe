@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, bindActionCreators } from 'redux'
+import { createStore, combineReducers, applyMiddleware, bindActionCreators } from 'redux'
 import React from 'react'
 import ReactDOM from 'react-dom';
 import { connect, Provider } from 'react-redux'
@@ -15,52 +15,63 @@ const createAppStore = (reducer, mws) => {
   return createStoreWithMW(reducer)
 }
 
-export const generateAction = (method, key, isAsync) => { // 生成对应的
-  if (isAsync) return `${method}${key}async`
-  return method + key;
+export const generateAction = (namespace, method, key, isAsync) => { // 生成对应的
+  if (isAsync) return `${namespace}${method}${key}async`
+  return namespace + method + key;
 }
 
-export const storeCreator = (initialState, syncs, asyncs) => {
+export const storeCreator = (states, syncs, asyncs) => {
   const actionTypeToItem = {} // 映射actionType改变对应state的key
-  const syncActions = {} // 同步action的所有action函数
-  const syncHandlers = {} // 同步action对应的state处理函数
-  const asyncActions = {} // 异步action的所有action函数
-  const asyncHandlers = {} // 异步action对应的state处理函数
+  // const syncActions = {} // 同步action的所有action函数
+  // const syncHandlers = {} // 同步action对应的state处理函数
+  // const asyncActions = {} // 异步action的所有action函数
+  // const asyncHandlers = {} // 异步action对应的state处理函数
+  const actionCreators = {}
 
-  syncs.forEach((val) => { // 添加同步action和reducer处理函数
-    const { method, item } = val
-    const actionName = generateAction(method, item) // action生成方法的名字
-    const actionType = `${method.toUpperCase()}_${item.toUpperCase()}` // action的type名
+  const reducerHandlers = {} // 区分namespace的state处理函数
 
-    actionTypeToItem[actionType] = item
-    syncActions[actionName] = (data) => ({
-      type: actionType,
-      data,
-    })
+  const handleAction = (handlers, actionVal, isAsync) => {
+    const { namespace, method, item } = actionVal
+    const actionName = generateAction(namespace, method, item, isAsync)
+    let actionType = `${namespace.toUpperCase()}_${method.toUpperCase()}_${item.toUpperCase()}`
+    if (isAsync) actionType += '_ASYNC'
+    if (!handlers[namespace]) handlers[namespace] = {} // eslint-disable-line
 
     if (method === 'concat') {
-      syncHandlers[actionType] = (state, action, key) => (
+      handlers[namespace][actionType] = (state, action, key) => ( // eslint-disable-line
         Object.assign({}, state, {
           [key]: state[key].concat(action.data),
         })
       )
     } else {
-      syncHandlers[actionType] = (state, action, key) => (
+      handlers[namespace][actionType] = (state, action, key) => ( // eslint-disable-line
         Object.assign({}, state, {
           [key]: action.data,
         })
       )
     }
+    return {
+      actionName,
+      actionType,
+    }
+  }
+
+  syncs.forEach((val) => { // 添加同步action和reducer处理函数
+    const { actionName, actionType } = handleAction(reducerHandlers, val)
+    actionTypeToItem[actionType] = val.item
+    actionCreators[actionName] = (data) => ({
+      type: actionType,
+      data,
+    })
   })
 
   if (asyncs) { // 添加异步action和reducer处理函数
     asyncs.forEach((val) => {
-      const { method, item, launch } = val
-      const actionName = generateAction(method, item, true)
-      const actionType = `${method.toUpperCase()}_${item.toUpperCase()}_ASYNC`
+      const { actionName, actionType } = handleAction(reducerHandlers, val, true)
+      const { item, launch } = val
 
       actionTypeToItem[actionType] = item
-      asyncActions[actionName] = (param) => (
+      actionCreators[actionName] = (param) => (
         (dispatch) => {
           launch(param).then((data) => {
             dispatch({
@@ -70,20 +81,6 @@ export const storeCreator = (initialState, syncs, asyncs) => {
           })
         }
       )
-
-      if (method === 'concat') {
-        asyncHandlers[actionType] = (state, action, key) => (
-          Object.assign({}, state, {
-            [key]: state[key].concat(action.data),
-          })
-        )
-      } else {
-        asyncHandlers[actionType] = (state, action, key) => (
-          Object.assign({}, state, {
-            [key]: action.data,
-          })
-        )
-      }
     })
   }
 
@@ -96,19 +93,28 @@ export const storeCreator = (initialState, syncs, asyncs) => {
       return state
     })
 
-  const reducer = createReducer(initialState, Object.assign({}, syncHandlers, asyncHandlers))
+  const reducers = {}
+  const stateEntries = Object.entries(states)
+  stateEntries.forEach((entry) => {
+    reducers[entry[0]] = createReducer(entry[1], reducerHandlers[entry[0]])
+  })
 
+  // console.log(store.getState(), actionCreators)
   return {
-    actions: Object.assign({}, syncActions, asyncActions),
-    store: createAppStore(reducer, middlewares),
+    actions: actionCreators,
+    store: createAppStore(combineReducers(reducers), middlewares),
   }
 };
 
 export const connectMe = (component, keys, actions) => {
   const mapStateToProps = (state) => {
     const propsStore = {}
-    keys.forEach((key) => {
-      propsStore[key] = state[key]
+    const keyEntries = Object.entries(keys)
+
+    keyEntries.forEach((entry) => {
+      entry[1].forEach((key) => {
+        propsStore[key] = state[entry[0]][key]
+      })
     })
     return propsStore;
   }

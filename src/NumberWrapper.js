@@ -34,7 +34,14 @@ NumberWrapper.propTypes = {
   concatArr: PropTypes.func.isRequired,
 };
 
-export default connectMe(NumberWrapper, ['num', 'arr'], {
-  updateNum: actions[generateAction('update', 'num')],
-  concatArr: actions[generateAction('concat', 'arr', true)],
-});
+const stateProps = {
+  first: ['num'],
+  second: ['arr'],
+}
+
+const actionProps = {
+  updateNum: actions[generateAction('first', 'update', 'num')],
+  concatArr: actions[generateAction('second', 'concat', 'arr', true)],
+}
+
+export default connectMe(NumberWrapper, stateProps, actionProps);
