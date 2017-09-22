@@ -8,6 +8,10 @@
 
 > 本分支未支持redux.combineReducers方法，feature/combineReducer支持
 
+
+**分支demo/todolist是用改封装实现的todoList，可作为借鉴**
+
+
 查看效果：
 ```
 $ yarn install # 安装依赖
