@@ -87,7 +87,6 @@ export const storeCreator = (initialState, syncs, asyncs) => {
       }
       return state
     })
-
   const reducer = createReducer(initialState, reducerHandlers)
 
   return {

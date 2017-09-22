@@ -1,27 +1,24 @@
 import { storeCreator } from './reduxMe.js'
 
-const initialState = {
-  num: 0,
-  arr: [1],
+/*
+todo = {
+  content: String,
+  isComplete: Boolean,
+}
+ */
+
+const todoState = {
+  todos: [],
 }
 
 const syncs = [{
-  item: 'num',
+  item: 'todos',
   method: 'update',
-}]
-
-const asyncs = [{
-  item: 'arr',
+}, {
+  item: 'todos',
   method: 'concat',
-  launch: (delay) => (
-    new Promise((resolve) => {
-      window.setTimeout(() => {
-        resolve([2])
-      }, delay)
-    })
-  ),
 }]
 
-const storePkg = storeCreator(initialState, syncs, asyncs)
+const storePkg = storeCreator(todoState, syncs)
 
 export default storePkg;
