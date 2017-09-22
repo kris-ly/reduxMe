@@ -6,6 +6,8 @@
 
 仓库整体是个用法例子，也是该封装的一种较好的实践。
 
+> 本分支未支持redux.combineReducers方法，feature/combineReducer支持
+
 查看效果：
 ```
 $ yarn install # 安装依赖
