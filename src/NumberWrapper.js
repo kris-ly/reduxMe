@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connectMe, generateAction } from './reduxMe.js'
-import storePkg from './store.js'
+import { connectMe } from './reduxMe.js'
+import { storePkg, updatNum, concatArr } from './store.js'
 
 const { actions } = storePkg
 
@@ -40,8 +40,8 @@ const stateProps = {
 }
 
 const actionProps = {
-  updateNum: actions[generateAction('first', 'update', 'num')],
-  concatArr: actions[generateAction('second', 'concat', 'arr', true)],
+  updateNum: actions[updatNum],
+  concatArr: actions[concatArr],
 }
 
 export default connectMe(NumberWrapper, stateProps, actionProps);

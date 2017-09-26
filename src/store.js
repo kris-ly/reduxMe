@@ -1,5 +1,8 @@
 import { storeCreator } from './reduxMe.js'
 
+export const updatNum = 'updatNum'
+export const concatArr = 'concatArr'
+
 const numState = {
   num: 0,
 }
@@ -15,14 +18,18 @@ const initialState = {
 
 const syncs = [{
   namespace: 'first',
-  item: 'num',
-  method: 'update',
+  name: updatNum,
+  method: (state, data) => ({
+    num: data,
+  }),
 }]
 
 const asyncs = [{
   namespace: 'second',
-  item: 'arr',
-  method: 'concat',
+  name: concatArr,
+  method: (state, data) => ({
+    arr: state.arr.concat(data),
+  }),
   launch: (delay) => (
     new Promise((resolve) => {
       window.setTimeout(() => {
@@ -32,6 +39,4 @@ const asyncs = [{
   ),
 }]
 
-const storePkg = storeCreator(initialState, syncs, asyncs)
-
-export default storePkg;
+export const storePkg = storeCreator(initialState, syncs, asyncs)
