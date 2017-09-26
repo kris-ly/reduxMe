@@ -7,18 +7,28 @@ todo = {
 }
  */
 
+export const updateTodo = 'updateTodo'
+export const addTodo = 'addTodo'
+
 const todoState = {
   todos: [],
 }
 
 const syncs = [{
-  item: 'todos',
-  method: 'update',
+  name: updateTodo,
+  method: (state, data) => {
+    const { todos } = state
+    const todoItem = todos[data]
+    todoItem.isComplete = !todoItem.isComplete
+    return {
+      todos: [...todos.slice(0, data), todoItem, ...todos.slice(data + 1)],
+    }
+  },
 }, {
-  item: 'todos',
-  method: 'concat',
+  name: addTodo,
+  method: (state, data) => ({
+    todos: state.todos.concat(data),
+  }),
 }]
 
-const storePkg = storeCreator(todoState, syncs)
-
-export default storePkg;
+export const storePkg = storeCreator(todoState, syncs);

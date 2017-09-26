@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { connectMe, generateAction } from './reduxMe.js'
-import storePkg from './store.js'
+import { storePkg, updateTodo, addTodo } from './store.js'
 
 const { actions } = storePkg
 
@@ -32,16 +32,8 @@ class Todos extends React.Component {
   }
 
 
-  handleComplete = (idx) => {
-    const { todos, completeTodo } = this.props
-    const todoItem = todos[idx]
-    todoItem.isComplete = !todoItem.isComplete
-    const newTodos = [...todos.slice(0, idx), todoItem, ...todos.slice(idx + 1)]
-    completeTodo(newTodos)
-  }
-
   render() {
-    const { todos } = this.props
+    const { todos, completeTodo } = this.props
     return (
       <div>
         <input
@@ -59,7 +51,7 @@ class Todos extends React.Component {
                   type={'checkbox'}
                   checked={todo.isComplete}
                   onChange={() => {
-                    this.handleComplete(idx)
+                    completeTodo(idx)
                   }}
                 />
                 <span
@@ -84,6 +76,6 @@ Todos.propTypes = {
 };
 
 export default connectMe(Todos, ['todos'], {
-  addTodo: actions[generateAction('concat', 'todos')],
-  completeTodo: actions[generateAction('update', 'todos')],
+  addTodo: actions[addTodo],
+  completeTodo: actions[updateTodo],
 });
