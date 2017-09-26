@@ -9,7 +9,14 @@
 > 本分支未支持redux.combineReducers方法，feature/combineReducer支持
 
 
-**分支demo/todolist是用改封装实现的todoList，可作为借鉴**
+> 分支demo/todolist是用改封装实现的todoList，可作为借鉴
+
+
+### 没想到这么就引来了reduxMe1.0，鼓掌👏。
+
+更新log:
+- 0.9：内置两种action类型：`update`、`concat`，基本满足使用要求
+- 1.0：全面放开action的定义，state的改变更加灵活，不再受限
 
 
 查看效果：
@@ -37,31 +44,38 @@ const initialState = {
 ```
 
 
-2. `syncs[Array]`：对state的同步操作
+2. `syncs[Array]`：对state的同步action操作
 
-目前包含的action类型有: `update`和`concat`
+`Array`的每一项是一个`Object`，包含以下key：
 
-- update: 更新（更改）
-- concat: 数组的连接
+- `name`：action的名字
+- `method`：action对state的操作，输入输出：`(state, data) => newState Object`
 
 例如：
 
 ```javascript
 const syncs = [{
-  item: 'num', // 此action修改state对应的key
-  method: 'update', // action的操作
+  name: 'addNum', // action的名字
+  method: (state, data) => ({
+    num: state.num + data,
+  }), // action的操作
 }]
 ```
+
 3. `asyncs[Array]`：对state的异步操作
 
-action类型同上
+`Array`的每一项也是一个`Object`，key除了包含以上的 `name`、`method`，还有`launch`。
+
+`launch`是异步action的数据返回函数，目前只支持了Promise的返回形式
 
 例如：
 
 ```javascript
 const syncs = [{
-  item: 'num',
-  action: 'update',
+  name: concatArr,
+  method: (state, data) => ({
+    arr: state.arr.concat(data),
+  }),
   launch: [function], // 为异步操作的数据流方法，返回一个Promise，在resolve中传递action的payload
 }]
 ```
@@ -70,8 +84,8 @@ const syncs = [{
 
 ```
 {
-    actions: , // 所有的action生成函数
-    store: , // store对象
+    actions: [Object], // 所有的action生成函数
+    store: [Object], // store对象
 }
 ```
 
@@ -85,17 +99,8 @@ const syncs = [{
 - keys[Array]：将组件所需的state中对应的keys变为组件的props
 - actions[Object]：将组件所需的actions变为组件对应的props
 
-### 3. generateAction
 
-获取action生成函数的函数名
-
-输入输入：`(method, key, isAsync) => actionName[String]`
-
-- `method[String]`: action的操作：update、concat
-- `key[String]`：改变state对应key
-- `isAsync[boolean]`：是否是异步action
-
-### 4. renderProvider
+### 3. renderProvider
 
 对react-redux的Provider和react-dom中render方法的封装
 
@@ -104,5 +109,3 @@ const syncs = [{
 - `store[Object]`： app的store
 - `Component[react组件]`：包在Provider中的smart component
 - `containerId`：html文件中挂载react组件的html元素的id
-
-

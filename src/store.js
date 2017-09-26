@@ -5,14 +5,22 @@ const initialState = {
   arr: [1],
 }
 
+export const addNum = 'addNum'
+export const concatArr = 'concatArrAsync'
+
 const syncs = [{
-  item: 'num',
-  method: 'update',
+  name: addNum,
+  method: (state, data) => ({
+    num: state.num + data,
+    arr: state.arr.concat([data]),
+  }),
 }]
 
 const asyncs = [{
-  item: 'arr',
-  method: 'concat',
+  name: concatArr,
+  method: (state, data) => ({
+    arr: state.arr.concat(data),
+  }),
   launch: (delay) => (
     new Promise((resolve) => {
       window.setTimeout(() => {
@@ -22,6 +30,4 @@ const asyncs = [{
   ),
 }]
 
-const storePkg = storeCreator(initialState, syncs, asyncs)
-
-export default storePkg;
+export const storePkg = storeCreator(initialState, syncs, asyncs);

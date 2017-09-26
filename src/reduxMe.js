@@ -15,46 +15,28 @@ const createAppStore = (reducer, mws) => {
   return createStoreWithMW(reducer)
 }
 
-export const generateAction = (method, key, isAsync) => { // 生成对应的
-  if (isAsync) return `${method}${key}async`
-  return method + key;
-}
-
 export const storeCreator = (initialState, syncs, asyncs) => {
-  const actionTypeToItem = {} // 映射actionType改变对应state的key
   const actionCreators = {} // action的所有action函数
   const reducerHandlers = {} // 异步action对应的state处理函数
 
   const handleAction = (handlers, actionVal, isAsync) => {
-    const { method, item } = actionVal
-    const actionName = generateAction(method, item, isAsync) // action生成方法的名字
-    let actionType = `${method.toUpperCase()}_${item.toUpperCase()}` // action的type名
+    const { method, name } = actionVal
+    let actionType = name.toUpperCase() // action的type名
+
     if (isAsync) actionType += '_ASYNC'
 
-    if (method === 'concat') {
-      handlers[actionType] = (state, action, key) => ( // eslint-disable-line
-        Object.assign({}, state, {
-          [key]: state[key].concat(action.data),
-        })
-      )
-    } else {
-      handlers[actionType] = (state, action, key) => ( // eslint-disable-line
-        Object.assign({}, state, {
-          [key]: action.data,
-        })
-      )
+    handlers[actionType] = (state, action) => { // eslint-disable-line
+      const nextState = method(state, action.data)
+      return Object.assign({}, state, nextState)
     }
-    return {
-      actionName,
-      actionType,
-    }
+
+    return actionType
   }
 
   syncs.forEach((val) => { // 添加同步action和reducer处理函数
-    const { actionName, actionType } = handleAction(reducerHandlers, val)
+    const actionType = handleAction(reducerHandlers, val)
 
-    actionTypeToItem[actionType] = val.item
-    actionCreators[actionName] = (data) => ({
+    actionCreators[val.name] = (data) => ({
       type: actionType,
       data,
     })
@@ -62,11 +44,9 @@ export const storeCreator = (initialState, syncs, asyncs) => {
 
   if (asyncs) { // 添加异步action和reducer处理函数
     asyncs.forEach((val) => {
-      const { actionName, actionType } = handleAction(reducerHandlers, val, true)
-      const { item, launch } = val
-
-      actionTypeToItem[actionType] = item
-      actionCreators[actionName] = (param) => (
+      const actionType = handleAction(reducerHandlers, val, true)
+      const { name, launch } = val
+      actionCreators[name] = (param) => (
         (dispatch) => {
           launch(param).then((data) => {
             dispatch({
@@ -83,16 +63,16 @@ export const storeCreator = (initialState, syncs, asyncs) => {
     (state = initState, action) => {
       const actionType = action.type
       if (handlers[actionType]) {
-        return handlers[actionType](state, action, actionTypeToItem[actionType])
+        return handlers[actionType](state, action)
       }
       return state
     })
 
   const reducer = createReducer(initialState, reducerHandlers)
-
+  const store = createAppStore(reducer, middlewares)
   return {
     actions: actionCreators,
-    store: createAppStore(reducer, middlewares),
+    store,
   }
 };
 

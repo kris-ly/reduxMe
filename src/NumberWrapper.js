@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connectMe, generateAction } from './reduxMe.js'
-import storePkg from './store.js'
+import { connectMe } from './reduxMe.js'
+import { storePkg, addNum, concatArr } from './store.js'
 
 const { actions } = storePkg
 
@@ -35,6 +35,6 @@ NumberWrapper.propTypes = {
 };
 
 export default connectMe(NumberWrapper, ['num', 'arr'], {
-  updateNum: actions[generateAction('update', 'num')],
-  concatArr: actions[generateAction('concat', 'arr', true)],
+  updateNum: actions[addNum],
+  concatArr: actions[concatArr],
 });
