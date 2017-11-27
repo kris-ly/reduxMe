@@ -21,7 +21,7 @@ $ yarn install # 安装依赖
 $ yarn start # 打开浏览器，在http://localhost:8080/ 查看
 ```
 
-> `src/reduxMe.js`是对redux和react-redux的封装
+> `/reduxMe/index.js`是对redux和react-redux的封装
 
 ## 主要接口
 
