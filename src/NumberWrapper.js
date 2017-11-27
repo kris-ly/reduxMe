@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connectMe } from './reduxMe.js'
-import { storePkg, addNum, concatArr } from './store.js'
-
-const { actions } = storePkg
+import { connectMe } from '../reduxMe'
+import { actions, addNum, concatArr } from './store.js'
 
 class NumberWrapper extends React.Component {
   handleChange = () => {
@@ -19,9 +17,9 @@ class NumberWrapper extends React.Component {
     return (
       <div>
         <div>{num}</div>
-        <div onClick={this.handleChange}>改变</div>
+        <button onClick={this.handleChange}>改变</button>
         <div>{JSON.stringify(arr)}</div>
-        <div onClick={this.handleConcat}>追加</div>
+        <button onClick={this.handleConcat}>追加</button>
       </div>
     )
   }

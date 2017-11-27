@@ -1,4 +1,4 @@
-import { storeCreator } from './reduxMe.js'
+import { storeCreator } from '../reduxMe'
 
 const initialState = {
   num: 0,
@@ -30,4 +30,8 @@ const asyncs = [{
   ),
 }]
 
-export const storePkg = storeCreator(initialState, syncs, asyncs);
+const storePkg = storeCreator(initialState, syncs, asyncs);
+
+export const actions = storePkg.actions
+export const store = storePkg.store
+
