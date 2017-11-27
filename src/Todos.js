@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connectMe, generateAction } from './reduxMe.js'
-import { storePkg, updateTodo, addTodo } from './store.js'
-
-const { actions } = storePkg
+import { connectMe } from '../reduxMe'
+import { actions, updateTodo, addTodo } from './store.js'
 
 class Todos extends React.Component {
   state = {
@@ -18,14 +16,14 @@ class Todos extends React.Component {
 
   handleAdd = () => {
     const content = this.state.val.trim()
-    const { addTodo } = this.props
+    const { addtodo } = this.props
 
     if (!content) return
     const newItem = [{
       content,
       isComplete: false,
     }]
-    addTodo(newItem)
+    addtodo(newItem)
     this.setState({
       val: '',
     })
@@ -33,7 +31,7 @@ class Todos extends React.Component {
 
 
   render() {
-    const { todos, completeTodo } = this.props
+    const { todos, updatetodo } = this.props
     return (
       <div>
         <input
@@ -51,7 +49,7 @@ class Todos extends React.Component {
                   type={'checkbox'}
                   checked={todo.isComplete}
                   onChange={() => {
-                    completeTodo(idx)
+                    updatetodo(idx)
                   }}
                 />
                 <span
@@ -71,11 +69,11 @@ Todos.propTypes = {
     content: PropTypes.string.isRequired,
     isComplete: PropTypes.bool.isRequired,
   })).isRequired,
-  addTodo: PropTypes.func.isRequired,
-  completeTodo: PropTypes.func.isRequired,
+  addtodo: PropTypes.func.isRequired,
+  updatetodo: PropTypes.func.isRequired,
 };
 
 export default connectMe(Todos, ['todos'], {
-  addTodo: actions[addTodo],
-  completeTodo: actions[updateTodo],
+  addtodo: actions[addTodo],
+  updatetodo: actions[updateTodo],
 });

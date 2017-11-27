@@ -26,7 +26,10 @@ const config = {
     rules: [
       {
         test: /\.jsx?$/,
-        include: path.resolve(__dirname, 'src'),
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'reduxMe'),
+        ],
         loader: 'babel-loader',
         options: babelConfig,
       },

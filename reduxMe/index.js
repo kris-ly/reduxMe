@@ -71,8 +71,6 @@ export const storeCreator = (initialState, syncs, asyncs) => {
   const reducer = createReducer(initialState, reducerHandlers)
   const store = createAppStore(reducer, middlewares)
 
-  console.log(store, actionCreators)
-
   return {
     actions: actionCreators,
     store,

@@ -1,4 +1,4 @@
-import { storeCreator } from './reduxMe.js'
+import { storeCreator } from '../reduxMe'
 
 /*
 todo = {
@@ -31,4 +31,7 @@ const syncs = [{
   }),
 }]
 
-export const storePkg = storeCreator(todoState, syncs);
+const storePkg = storeCreator(todoState, syncs);
+
+export const actions = storePkg.actions
+export const store = storePkg.store
