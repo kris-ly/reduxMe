@@ -1,4 +1,4 @@
-import { storeCreator } from './reduxMe.js'
+import { storeCreator } from '../reduxMe'
 
 export const updatNum = 'updatNum'
 export const concatArr = 'concatArr'
@@ -39,4 +39,7 @@ const asyncs = [{
   ),
 }]
 
-export const storePkg = storeCreator(initialState, syncs, asyncs)
+const storePkg = storeCreator(initialState, syncs, asyncs)
+export const actions = storePkg.actions
+export const store = storePkg.store
+

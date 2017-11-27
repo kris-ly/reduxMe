@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connectMe } from './reduxMe.js'
-import { storePkg, updatNum, concatArr } from './store.js'
-
-const { actions } = storePkg
+import { connectMe } from '../reduxMe'
+import { actions, updatNum, concatArr } from './store.js'
 
 class NumberWrapper extends React.Component {
   handleChange = () => {
